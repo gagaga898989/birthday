@@ -45,7 +45,7 @@ const Page: React.FC = () => {
         return;
       }
       console.log("ログイン処理に成功しました。");
-      router.replace("/admin");
+      router.replace("/countdown"); // ← ここを変更
     } catch (error) {
       setLoginError("ログイン処理中に予期せぬエラーが発生しました。");
       console.error(JSON.stringify(error, null, 2));

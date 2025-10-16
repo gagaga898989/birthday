@@ -16,7 +16,8 @@ export async function GET(req: NextRequest) {
     }
 
     const userData = await prisma.user.findUnique({
-      where: { email: user.email },
+      // "User" を "user" に修正
+      where: { email: user.email! }, // emailがnullでないことを保証
       select: {
         birthday: true,
       },
