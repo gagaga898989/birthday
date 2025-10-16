@@ -5,7 +5,6 @@
 // 3. npx prisma generate
 // 4. npx prisma db seed
 
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -15,8 +14,15 @@ datasource db {
   url       = env("DATABASE_URL")
   directUrl = env("DIRECT_URL")
 }
-        
-        
+
+// ユーザー情報を格納するテーブル
+model User {
+  id        String    @id @default(uuid())
+  email     String    @unique
+  birthday  DateTime? // 誕生日を格納するカラムを追加（オプショナル）
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
 
 // 投稿記事テーブル
 model Post {
@@ -40,11 +46,11 @@ model Category {
 
 // 投稿記事とカテゴリを紐づける中間テーブル
 model PostCategory {
-  id          String @id @default(uuid())
-  postId      String
-  categoryId  String
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  category    Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
-  post        Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  id           String @id @default(uuid())
+  postId       String
+  categoryId   String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  category     Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  post         Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
 }
