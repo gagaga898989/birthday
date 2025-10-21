@@ -4,7 +4,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEnvelope, faKey } from "@fortawesome/free-solid-svg-icons";
 import { twMerge } from "tailwind-merge";
 import ValidationAlert from "../_components/ValidationAlert";
-import { supabase } from "@/utils/supabase";
+import { createClient } from "@/utils/supabase/client"; // 修正
 import { useRouter } from "next/navigation";
 
 const Page: React.FC = () => {
@@ -15,6 +15,7 @@ const Page: React.FC = () => {
   const [loginError, setLoginError] = useState("");
 
   const router = useRouter();
+  const supabase = createClient(); // 修正
 
   const updateEmailField = (value: string) => {
     setEmail(value);
@@ -46,6 +47,7 @@ const Page: React.FC = () => {
       }
       console.log("ログイン処理に成功しました。");
       router.replace("/countdown"); // ← ここを変更
+      router.refresh(); // ページをリフレッシュしてセッションを再読み込み
     } catch (error) {
       setLoginError("ログイン処理中に予期せぬエラーが発生しました。");
       console.error(JSON.stringify(error, null, 2));

@@ -2,11 +2,12 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { supabase } from "@/utils/supabase";
+import { createClient } from "@/utils/supabase/client"; // 修正
 
 const Page: React.FC = () => {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
+  const supabase = createClient(); // 修正
 
   useEffect(() => {
     const checkUser = async () => {
@@ -21,7 +22,7 @@ const Page: React.FC = () => {
     };
 
     checkUser();
-  }, [router]);
+  }, [router, supabase]); // 修正
 
   return (
     <main>

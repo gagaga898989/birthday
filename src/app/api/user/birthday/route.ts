@@ -1,11 +1,13 @@
-import { NextRequest, NextResponse } from "next/server";
-import { supabase } from "@/utils/supabase";
+import { NextResponse } from "next/server";
+import { createClient } from "@/utils/supabase/server"; // 修正
 import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
-export async function GET(req: NextRequest) {
+export async function GET() {
+  // reqは不要
   try {
+    const supabase = createClient(); // 修正
     const {
       data: { user },
       error: authError,
@@ -16,8 +18,7 @@ export async function GET(req: NextRequest) {
     }
 
     const userData = await prisma.user.findUnique({
-      // "User" を "user" に修正
-      where: { email: user.email! }, // emailがnullでないことを保証
+      where: { email: user.email! },
       select: {
         birthday: true,
       },
@@ -27,8 +28,7 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
-    // ダミーの誕生日データを返す（実際のデータがない場合）
-    const birthday = userData.birthday || new Date("2025-12-24T00:00:00.000Z");
+    const birthday = userData.birthday;
 
     return NextResponse.json({ birthday });
   } catch (error) {
