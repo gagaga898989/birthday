@@ -6,6 +6,7 @@ import { faCake } from "@fortawesome/free-solid-svg-icons/faCake";
 import { supabase } from "@/utils/supabase"; // ◀ 追加
 import { useAuth } from "@/app/_hooks/useAuth"; // ◀ 追加
 import { useRouter } from "next/navigation"; // ◀ 追加
+import Link from "next/link";
 
 const Header: React.FC = () => {
   // ▼ 追加
@@ -26,6 +27,14 @@ const Header: React.FC = () => {
             "text-lg font-bold text-white"
           )}
         >
+          {/* ▼ 追加 */}
+          {!isLoading &&
+            (session ? (
+              <button onClick={logout}>Logout</button>
+            ) : (
+              <Link href="/login">Login</Link>
+            ))}
+          {/* ▲ 追加 */}
           <div>
             <FontAwesomeIcon icon={faCake} className="mr-1" />
             Header
