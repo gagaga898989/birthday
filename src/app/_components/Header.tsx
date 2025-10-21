@@ -1,22 +1,46 @@
 "use client";
 import { twMerge } from "tailwind-merge";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faFish } from "@fortawesome/free-solid-svg-icons";
-import { faCake } from "@fortawesome/free-solid-svg-icons/faCake";
-import { supabase } from "@/utils/supabase"; // ◀ 追加
-import { useAuth } from "@/app/_hooks/useAuth"; // ◀ 追加
-import { useRouter } from "next/navigation"; // ◀ 追加
-import Link from "next/link";
+import { faCake, faRightFromBracket } from "@fortawesome/free-solid-svg-icons"; // faRightFromBracket をインポート
+import { createClient } from "@/utils/supabase/client"; // Supabase クライアントをインポート
+import { useRouter } from "next/navigation"; // useRouter をインポート
+import { useState, useEffect } from "react"; // useState, useEffect をインポート
 
 const Header: React.FC = () => {
-  // ▼ 追加
   const router = useRouter();
-  const { isLoading, session } = useAuth();
-  const logout = async () => {
+  const supabase = createClient();
+  const [isLoggedIn, setIsLoggedIn] = useState(false); // ログイン状態を管理するstate
+
+  useEffect(() => {
+    // ログイン状態を確認
+    const checkLoginStatus = async () => {
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+      setIsLoggedIn(!!session);
+    };
+    checkLoginStatus();
+
+    // 認証状態の変化を監視
+    const { data: authListener } = supabase.auth.onAuthStateChange(
+      (_event, session) => {
+        setIsLoggedIn(!!session);
+      }
+    );
+
+    // クリーンアップ関数
+    return () => {
+      authListener?.subscription.unsubscribe();
+    };
+  }, [supabase]);
+
+  // ログアウト処理
+  const handleLogout = async () => {
     await supabase.auth.signOut();
-    router.replace("/");
+    router.push("/login"); // ログアウト後にログインページへリダイレクト
+    router.refresh(); // ページをリフレッシュ
   };
-  // ▲ 追加
+
   return (
     <header>
       <div className="bg-slate-800 py-2">
@@ -27,19 +51,23 @@ const Header: React.FC = () => {
             "text-lg font-bold text-white"
           )}
         >
-          {/* ▼ 追加 */}
-          {!isLoading &&
-            (session ? (
-              <button onClick={logout}>Logout</button>
-            ) : (
-              <Link href="/login">Login</Link>
-            ))}
-          {/* ▲ 追加 */}
           <div>
             <FontAwesomeIcon icon={faCake} className="mr-1" />
             Header
           </div>
-          <div>About</div>
+          <div className="flex items-center space-x-4">
+            <div>About</div>
+            {/* ログイン状態に応じてログアウトボタンを表示 */}
+            {isLoggedIn && (
+              <button
+                onClick={handleLogout}
+                className="text-sm text-gray-300 hover:text-white"
+                title="ログアウト"
+              >
+                <FontAwesomeIcon icon={faRightFromBracket} />
+              </button>
+            )}
+          </div>
         </div>
       </div>
     </header>

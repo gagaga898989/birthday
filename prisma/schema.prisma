@@ -21,35 +21,15 @@ model User {
   birthday  DateTime? // 誕生日を格納するカラムを追加（オプショナル）
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
+  isAdmin   Boolean   @default(false) // 管理者フラグを追加
 }
 
-// 投稿記事テーブル
-model Post {
-  id             String @id @default(uuid())
-  title          String
-  content        String
-  coverImageURL  String
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
-  categories     PostCategory[]
-}
-
-// カテゴリテーブル
-model Category {
-  id         String @id @default(uuid())
-  name       String @unique
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
-  posts      PostCategory[]
-}
-
-// 投稿記事とカテゴリを紐づける中間テーブル
-model PostCategory {
-  id           String @id @default(uuid())
-  postId       String
-  categoryId   String
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
-  category     Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
-  post         Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+// prisma/schema.prisma に追加するモデルの例
+model Gift {
+  id          String   @id @default(uuid())
+  name        String
+  description String
+  imageUrl    String? // ギフト画像のURL (オプショナル)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }
