@@ -3,8 +3,19 @@ import { twMerge } from "tailwind-merge";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faFish } from "@fortawesome/free-solid-svg-icons";
 import { faCake } from "@fortawesome/free-solid-svg-icons/faCake";
+import { supabase } from "@/utils/supabase"; // ◀ 追加
+import { useAuth } from "@/app/_hooks/useAuth"; // ◀ 追加
+import { useRouter } from "next/navigation"; // ◀ 追加
 
 const Header: React.FC = () => {
+  // ▼ 追加
+  const router = useRouter();
+  const { isLoading, session } = useAuth();
+  const logout = async () => {
+    await supabase.auth.signOut();
+    router.replace("/");
+  };
+  // ▲ 追加
   return (
     <header>
       <div className="bg-slate-800 py-2">
