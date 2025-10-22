@@ -1,0 +1,147 @@
+/* src/app/happy-birthday/page.module.css */
+
+/* --- 既存のスタイル (.container, .mainContent, .card, .icon, .title, .message, @keyframes bounce) は省略 --- */
+/* ページ全体のコンテナ */
+.container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  /* 優しいグラデーション背景 */
+  background: linear-gradient(135deg, #fff1f5 0%, #ffe4e1 100%);
+  padding: 2rem;
+  font-family:
+    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue",
+    Arial, sans-serif;
+}
+
+/* メインコンテンツ領域 */
+.mainContent {
+  width: 100%;
+  max-width: 600px;
+}
+
+/* お祝いカード */
+.card {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 2.5rem 3rem; /* パディングを調整 */
+  text-align: center;
+  /* 綺麗な影 */
+  box-shadow:
+    0 10px 25px rgba(0, 0, 0, 0.05),
+    0 5px 10px rgba(0, 0, 0, 0.02);
+  transform: scale(1);
+  transition:
+    transform 0.3s ease-in-out,
+    box-shadow 0.3s ease-in-out;
+}
+
+/* カードホバー時のアニメーション */
+.card:hover {
+  transform: scale(1.02);
+  box-shadow:
+    0 15px 30px rgba(0, 0, 0, 0.1),
+    0 8px 15px rgba(0, 0, 0, 0.05);
+}
+
+/* ケーキのアイコン */
+.icon {
+  font-size: 4.5rem; /* 72px */
+  line-height: 1;
+  margin-bottom: 1rem;
+  /* アイコンが軽く弾むアニメーション */
+  animation: bounce 2s infinite ease-in-out;
+}
+
+/* タイトル */
+.title {
+  font-size: 2.25rem; /* 36px */
+  font-weight: 700;
+  color: #d9376e; /* 華やかなピンク系 */
+  margin-bottom: 1.5rem;
+}
+
+/* メッセージ本文 */
+.message {
+  font-size: 1.125rem; /* 18px */
+  color: #333;
+  line-height: 1.8;
+  margin-bottom: 2.5rem; /* ボタンとの間隔を確保 */
+}
+
+/* --- ここからボタン関連のスタイルを追加 --- */
+
+/* ボタンを配置するコンテナ */
+.buttonContainer {
+  margin-top: 2rem; /* メッセージからの間隔 */
+}
+
+/* ギフトページへ遷移するボタン */
+.giftButton {
+  display: inline-block; /* ボタンとしての表示 */
+  padding: 0.9rem 2rem; /* パディング */
+  font-size: 1.1rem; /* 文字サイズ */
+  font-weight: 600; /* 文字の太さ */
+  color: #ffffff; /* 文字色 */
+  /* グラデーション背景 */
+  background: linear-gradient(45deg, #ff8a8a, #ff5c5c);
+  border: none; /* ボーダーなし */
+  border-radius: 50px; /* 角を丸く */
+  cursor: pointer; /* カーソルをポインターに */
+  text-decoration: none; /* 下線を消す */
+  box-shadow: 0 4px 15px rgba(255, 92, 92, 0.4); /* 影 */
+  transition: all 0.3s ease; /* アニメーション */
+  /* 軽いアニメーションを追加 */
+  animation: pulse 2.5s infinite ease-in-out;
+}
+
+/* ボタンホバー時のスタイル */
+.giftButton:hover {
+  background: linear-gradient(45deg, #ff5c5c, #ff8a8a); /* グラデーション反転 */
+  box-shadow: 0 6px 20px rgba(255, 92, 92, 0.6); /* 影を濃く */
+  transform: translateY(-2px); /* 少し上に移動 */
+  animation-play-state: paused; /* ホバー中は鼓動アニメーションを停止 */
+}
+
+/* ボタンクリック時（アクティブ時）のスタイル */
+.giftButton:active {
+  transform: translateY(1px); /* 少し下に移動 */
+  box-shadow: 0 2px 10px rgba(255, 92, 92, 0.3); /* 影をさらに薄く */
+}
+
+/* --- ここまでボタン関連のスタイルを追加 --- */
+
+/* --- 既存のアニメーション定義 --- */
+/* アイコンのバウンスアニメーション定義 */
+@keyframes bounce {
+  0%,
+  20%,
+  50%,
+  80%,
+  100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-20px);
+  }
+  60% {
+    transform: translateY(-10px);
+  }
+}
+
+/* --- ボタンの鼓動アニメーション定義 (追加) --- */
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 4px 15px rgba(255, 92, 92, 0.4);
+  }
+  50% {
+    transform: scale(1.03); /* 少し拡大 */
+    box-shadow: 0 6px 20px rgba(255, 92, 92, 0.6); /* 影を少し濃く */
+  }
+  100% {
+    transform: scale(1);
+    box-shadow: 0 4px 15px rgba(255, 92, 92, 0.4);
+  }
+}

@@ -1,0 +1,185 @@
+/* src/app/gift/page.module.css */
+
+/* --- ページ全体のスタイル --- */
+.container {
+  padding: 2rem 1rem; /* 上下のパディングを多めに */
+  background: linear-gradient(
+    135deg,
+    #f0f4ff 0%,
+    #e6e9ff 100%
+  ); /* 淡いブルー系のグラデーション */
+  min-height: calc(100vh - 4rem); /* ヘッダーの高さを考慮 */
+  font-family:
+    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue",
+    Arial, sans-serif;
+}
+
+/* --- ヘッダー部分 --- */
+.header {
+  text-align: center;
+  margin-bottom: 3rem; /* ギフトリストとの間隔 */
+}
+
+.title {
+  font-size: 2.5rem; /* 40px */
+  font-weight: 700;
+  color: #4a5568; /* 落ち着いた色 */
+  margin-bottom: 0.5rem;
+  /* 文字が少し浮き出るような影 */
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.subtitle {
+  font-size: 1.25rem; /* 20px */
+  color: #718096; /* 少し薄めの色 */
+}
+
+/* ローディング・エラー・メッセージ表示 */
+.messageArea {
+  text-align: center;
+  margin-top: 3rem;
+  font-size: 1.1rem;
+}
+.loadingText {
+  color: #4a5568;
+}
+.errorText {
+  color: #e53e3e; /* 赤色 */
+  font-weight: 500;
+}
+.infoText {
+  /* 選択済みメッセージなど */
+  color: #3182ce; /* 青色 */
+  font-weight: 500;
+}
+
+/* --- ギフトリストのグリッド --- */
+.giftGrid {
+  display: grid;
+  grid-template-columns: repeat(1, 1fr); /* モバイルでは1列 */
+  gap: 2rem; /* カード間のスペース */
+  max-width: 1000px; /* 最大幅を設定 */
+  margin: 0 auto; /* 中央揃え */
+}
+
+/* タブレットサイズ以上では2列 */
+@media (min-width: 640px) {
+  .giftGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* デスクトップサイズ以上では3列 */
+@media (min-width: 1024px) {
+  .giftGrid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* --- ギフトカードのスタイル --- */
+.giftCard {
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.08); /* 少し濃い影 */
+  overflow: hidden; /* 画像のはみ出しを防ぐ */
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease; /* ホバーアニメーション */
+  display: flex;
+  flex-direction: column; /* 画像、テキスト、ボタンを縦に並べる */
+}
+
+.giftCard:hover {
+  transform: translateY(-8px); /* ホバー時に少し浮き上がる */
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.12);
+}
+
+/* ギフト画像 */
+.giftImage {
+  width: 100%;
+  height: 180px; /* 画像の高さを固定 */
+  object-fit: cover; /* 画像の比率を保ちつつトリミング */
+  border-bottom: 1px solid #e2e8f0; /* 画像下に細い線 */
+}
+/* 画像がない場合のプレースホルダー（任意） */
+.giftImagePlaceholder {
+  width: 100%;
+  height: 180px;
+  background-color: #f7fafc;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #a0aec0;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+/* ギフトカードの内容部分（テキストとボタン） */
+.cardContent {
+  padding: 1.5rem;
+  flex-grow: 1; /* 残りの高さを埋める */
+  display: flex;
+  flex-direction: column;
+}
+
+/* ギフト名 */
+.giftName {
+  font-size: 1.5rem; /* 24px */
+  font-weight: 600;
+  color: #2d3748;
+  margin-bottom: 0.75rem;
+}
+
+/* ギフト説明 */
+.giftDescription {
+  font-size: 1rem; /* 16px */
+  color: #4a5568;
+  line-height: 1.6;
+  margin-bottom: 1.5rem;
+  flex-grow: 1; /* 説明文で高さを調整 */
+}
+
+/* ボタンのコンテナ */
+.buttonWrapper {
+  margin-top: auto; /* ボタンをカードの最下部に配置 */
+  text-align: right; /* ボタンを右寄せ */
+}
+
+/* 「これを選ぶ」ボタン */
+.selectButton {
+  display: inline-block;
+  padding: 0.7rem 1.5rem;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: #ffffff;
+  background: linear-gradient(
+    45deg,
+    #4299e1,
+    #3182ce
+  ); /* ブルー系のグラデーション */
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  text-decoration: none;
+  box-shadow: 0 4px 10px rgba(49, 130, 206, 0.3);
+  transition: all 0.2s ease;
+}
+
+.selectButton:hover:not(:disabled) {
+  /* disabledでないホバー時 */
+  background: linear-gradient(45deg, #3182ce, #4299e1);
+  box-shadow: 0 6px 15px rgba(49, 130, 206, 0.4);
+  transform: translateY(-1px);
+}
+
+.selectButton:active:not(:disabled) {
+  /* disabledでないクリック時 */
+  transform: translateY(0px);
+  box-shadow: 0 2px 8px rgba(49, 130, 206, 0.2);
+}
+
+/* disabled (選択済み/送信中) のスタイル */
+.selectButton:disabled {
+  cursor: not-allowed;
+  background: #a0aec0; /* グレーアウト */
+  box-shadow: none;
+}

@@ -1,8 +1,9 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation"; // useRouter をインポート
+import { useRouter } from "next/navigation";
 import { createClient } from "@/utils/supabase/client";
+import styles from "./page.module.css"; // ★CSSモジュールをインポート
 
 type Gift = {
   id: string;
@@ -19,14 +20,14 @@ const GiftPage: React.FC = () => {
   const [submitting, setSubmitting] = useState(false);
   const [submitMessage, setSubmitMessage] = useState<string | null>(null);
   const [alreadySelected, setAlreadySelected] = useState(false);
-  const router = useRouter(); // useRouter を初期化
+  const router = useRouter();
   const supabase = createClient();
 
   useEffect(() => {
     const fetchGifts = async () => {
       setLoading(true);
       setError(null);
-      setSubmitMessage(null); // メッセージをリセット
+      setSubmitMessage(null);
 
       const {
         data: { session },
@@ -40,7 +41,7 @@ const GiftPage: React.FC = () => {
       }
 
       try {
-        const response = await fetch("/api/admin/gifts"); // ギフト一覧取得API (要認証)
+        const response = await fetch("/api/admin/gifts"); // ギフト一覧取得API
 
         if (!response.ok) {
           if (response.status === 401) {
@@ -55,10 +56,14 @@ const GiftPage: React.FC = () => {
         const data: Gift[] = await response.json();
         setGifts(data);
 
-        // ユーザーが既に選択済みか確認するAPIを呼び出す (仮)
-        // 本来は GET /api/gift-selection を実装
+        // ユーザーが既に選択済みか確認
         try {
-          const selectionRes = await fetch("/api/gift-selection"); // このAPIはまだ作成していないので仮
+          // ★ GET /api/gift-selection を呼び出す
+          const selectionRes = await fetch("/api/gift-selection", {
+            headers: {
+              Authorization: `Bearer ${session.access_token}`, // 認証ヘッダーを追加
+            },
+          });
           if (selectionRes.ok) {
             const selectionData = await selectionRes.json();
             if (selectionData && selectionData.giftId) {
@@ -66,13 +71,18 @@ const GiftPage: React.FC = () => {
               setSubmitMessage("すでにギフトを選択済みです。");
             }
           } else if (selectionRes.status !== 404) {
+            // 404 (未選択) 以外はエラー
             console.error(
               "Failed to check existing selection:",
               selectionRes.statusText
             );
+            // 必要であればエラーメッセージを表示
+            // setError("選択状況の確認に失敗しました。");
           }
         } catch (selectionError) {
           console.error("Error checking existing selection:", selectionError);
+          // 必要であればエラーメッセージを表示
+          // setError("選択状況の確認中にエラーが発生しました。");
         }
       } catch (err) {
         console.error(err);
@@ -89,9 +99,9 @@ const GiftPage: React.FC = () => {
 
     fetchGifts();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, []); // 依存配列は空のまま
 
-  // ギフト選択処理
+  // ギフト選択処理 (変更なし)
   const handleSelectGift = async (gift: Gift) => {
     if (submitting || alreadySelected) return;
 
@@ -134,10 +144,7 @@ const GiftPage: React.FC = () => {
             );
           }
         } else {
-          // --- ★成功した場合、完了ページへリダイレクト ---
-          router.push("/gift-selected");
-          // setSubmitMessage(`「${gift.name}」を選択しました！`); // メッセージ表示は不要に
-          // setAlreadySelected(true); // フラグ更新も不要に（ページ遷移するため）
+          router.push("/gift-selected"); // 完了ページへリダイレクト
         }
       } catch (err) {
         console.error(err);
@@ -148,49 +155,68 @@ const GiftPage: React.FC = () => {
         );
         setSubmitting(false); // エラー時は送信中状態を解除
       }
-      // finally 句を削除 (成功時はリダイレクトするため不要)
     }
   };
 
-  // --- JSX部分は変更なし ---
   return (
-    <main>
-      <div className="text-center">
-        <h1 className="text-4xl font-bold">お誕生日おめでとうございます！🎉</h1>
-        <p className="mt-4 text-xl">特別なギフトをご用意しました。</p>
+    // ★ ルート要素に .container クラスを適用
+    <main className={styles.container}>
+      {/* ★ ヘッダー部分を div で囲みクラスを適用 */}
+      <div className={styles.header}>
+        <h1 className={styles.title}>お誕生日おめでとうございます！🎉</h1>
+        <p className={styles.subtitle}>特別なギフトをご用意しました。</p>
+      </div>
 
-        {loading && <p className="mt-8">ギフトを読み込んでいます...</p>}
-        {error && <p className="mt-8 text-red-500">エラー: {error}</p>}
-        {/* submitMessage の表示も不要になる（ページ遷移するため） */}
-        {/* {submitMessage && <p className={`mt-4 font-bold ${alreadySelected ? 'text-blue-600' : 'text-green-600'}`}>{submitMessage}</p>} */}
+      {/* ローディング、エラー、送信メッセージ表示エリア */}
+      {(loading || error || submitMessage) && (
+        <div className={styles.messageArea}>
+          {loading && (
+            <p className={styles.loadingText}>ギフトを読み込んでいます...</p>
+          )}
+          {error && <p className={styles.errorText}>エラー: {error}</p>}
+          {submitMessage && <p className={styles.infoText}>{submitMessage}</p>}
+        </div>
+      )}
 
-        {!loading && !error && (
-          <div className="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {gifts.length === 0 ? (
-              <p className="col-span-full">
-                現在、利用可能なギフトはありません。
-              </p>
-            ) : (
-              gifts.map((gift) => (
-                <div
-                  key={gift.id}
-                  className="rounded-lg border p-4 text-left shadow"
-                >
-                  {gift.imageUrl && (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img
-                      src={gift.imageUrl}
-                      alt={gift.name}
-                      className="mb-3 h-40 w-full rounded object-cover"
-                    />
-                  )}
-                  <h2 className="text-2xl font-bold">{gift.name}</h2>
-                  <p className="mt-2 text-gray-600">{gift.description}</p>
-                  <div className="mt-4 flex justify-end">
+      {/* ギフトリスト表示 */}
+      {!loading && !error && (
+        // ★ ギフトグリッドにクラスを適用
+        <div className={styles.giftGrid}>
+          {gifts.length === 0 && !alreadySelected ? ( // 選択済みでない場合のみ表示
+            <p className={`${styles.messageArea} col-span-full`}>
+              現在、利用可能なギフトはありません。
+            </p>
+          ) : (
+            gifts.map((gift) => (
+              // ★ ギフトカードにクラスを適用
+              <div key={gift.id} className={styles.giftCard}>
+                {/* 画像表示 */}
+                {gift.imageUrl ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={gift.imageUrl}
+                    alt={gift.name}
+                    className={styles.giftImage} // ★ 画像クラス適用
+                  />
+                ) : (
+                  // 画像がない場合のプレースホルダー
+                  <div className={styles.giftImagePlaceholder}>
+                    <span>No Image</span>
+                  </div>
+                )}
+                {/* ★ カード内容コンテナにクラス適用 */}
+                <div className={styles.cardContent}>
+                  {/* ★ ギフト名クラス適用 */}
+                  <h2 className={styles.giftName}>{gift.name}</h2>
+                  {/* ★ 説明クラス適用 */}
+                  <p className={styles.giftDescription}>{gift.description}</p>
+                  {/* ★ ボタンラッパークラス適用 */}
+                  <div className={styles.buttonWrapper}>
+                    {/* ★ 選択ボタンクラス適用 */}
                     <button
                       onClick={() => handleSelectGift(gift)}
                       disabled={submitting || alreadySelected}
-                      className="rounded bg-blue-500 px-4 py-2 font-bold text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
+                      className={styles.selectButton} // ★ ボタンクラス適用
                     >
                       {submitting
                         ? "送信中..."
@@ -200,11 +226,11 @@ const GiftPage: React.FC = () => {
                     </button>
                   </div>
                 </div>
-              ))
-            )}
-          </div>
-        )}
-      </div>
+              </div>
+            ))
+          )}
+        </div>
+      )}
     </main>
   );
 };

@@ -54,7 +54,7 @@ const CountdownPage: React.FC = () => {
         today.getDate() === birthday.getDate()
       ) {
         // 誕生日当日の処理
-        router.push("/gift"); // ギフトページへリダイレクト
+        router.push("/happy-birthday"); // ギフトページへリダイレクト
         return;
       }
 
