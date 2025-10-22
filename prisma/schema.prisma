@@ -1,9 +1,9 @@
 // このファイルを更新したら...
 // 0. `npm run dev` や `npx prisma studio` を停止
-// 1. dev.db を削除
+// 1. dev.db を削除 (必要であれば) // dev.dbを削除すると既存のユーザーやギフト情報も消えるので注意
 // 2. npx prisma db push
 // 3. npx prisma generate
-// 4. npx prisma db seed
+// 4. npx prisma db seed (必要であれば)
 
 generator client {
   provider = "prisma-client-js"
@@ -18,18 +18,36 @@ datasource db {
 model User {
   id        String    @id @default(uuid())
   email     String    @unique
-  birthday  DateTime? // 誕生日を格納するカラムを追加（オプショナル）
+  birthday  DateTime?
+// 誕生日を格納するカラムを追加（オプショナル）
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
   isAdmin   Boolean   @default(false) // 管理者フラグを追加
+  giftSelections GiftSelection[] // ユーザーが選んだギフトへのリレーションを追加
 }
 
-// prisma/schema.prisma に追加するモデルの例
+// ギフト情報を格納するテーブル
 model Gift {
   id          String   @id @default(uuid())
   name        String
   description String
-  imageUrl    String? // ギフト画像のURL (オプショナル)
+  imageUrl    String?
+// ギフト画像のURL (オプショナル)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+  giftSelections GiftSelection[] // このギフトを選んだ選択へのリレーションを追加
 }
+
+// ユーザーが選んだギフトを記録するテーブル (ここから追加)
+model GiftSelection {
+  id        String   @id @default(uuid())
+  userId    String   // ギフトを選んだユーザーのID
+  giftId    String   // 選ばれたギフトのID
+  createdAt DateTime @default(now()) // 選択された日時
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade) // Userへのリレーション
+  gift Gift @relation(fields: [giftId], references: [id], onDelete: Cascade) // Giftへのリレーション
+
+  @@unique([userId]) // ユーザーは1つしかギフトを選べない制約 (必要に応じて変更)
+}
+// (ここまで追加)
