@@ -31,6 +31,11 @@ async function main() {
       password: "password",
       birthday: new Date("2025-12-31T00:00:00.000Z"), // まだ先
     },
+    {
+      email: "Hirose@example.com",
+      password: "password",
+      birthday: new Date("2025-10-25T00:00:00.000Z"), // まだ先
+    },
   ];
 
   for (const userData of users) {
