@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import { createClient } from "@/utils/supabase/server";
 import { PrismaClient } from "@prisma/client";
 
+export const revalidate = 0;
+
 const prisma = new PrismaClient();
 
 // ギフト一覧取得 (GET)

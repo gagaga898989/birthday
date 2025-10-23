@@ -5,6 +5,8 @@ import { PrismaClient, Prisma } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
+export const revalidate = 0;
+
 // POST: ユーザーがギフトを選択したときに呼び出される
 export async function POST(req: Request) {
   const supabase = createClient();

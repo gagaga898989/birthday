@@ -5,6 +5,8 @@ import { PrismaClient, Prisma } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
+export const revalidate = 0;
+
 // GET: ギフト選択一覧を取得 (管理者用)
 export async function GET() {
   const supabase = createClient();
