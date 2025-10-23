@@ -1,13 +1,13 @@
 import { NextResponse } from "next/server";
-import { createClient } from "@/utils/supabase/server"; // 修正
+import { createClient } from "@/utils/supabase/server"; // これはそのまま
 import { PrismaClient } from "@prisma/client";
 
-const prisma = new PrismaClient();
+// const prisma = new PrismaClient(); // <- このグローバルインスタンスを削除
 
 export async function GET() {
-  // reqは不要
+  const prisma = new PrismaClient(); // <- 関数内で PrismaClient を初期化
   try {
-    const supabase = createClient(); // 修正
+    const supabase = createClient();
     const {
       data: { user },
       error: authError,
@@ -32,10 +32,13 @@ export async function GET() {
 
     return NextResponse.json({ birthday });
   } catch (error) {
-    console.error(error);
+    console.error("誕生日情報の取得中にエラー発生:", error); // 具体的なエラーをログに出力
     return NextResponse.json(
       { error: "Internal Server Error" },
       { status: 500 }
     );
+  } finally {
+    // サーバーレス環境では、リクエストごとに接続を切断するのが安全
+    await prisma.$disconnect();
   }
 }
