@@ -2,6 +2,10 @@ import { NextResponse } from "next/server";
 import { createClient } from "@/utils/supabase/server"; // これはそのまま
 import { PrismaClient } from "@prisma/client";
 
+// ↓↓↓ この行を追加 ↓↓↓
+export const dynamic = "force-dynamic";
+// ↑↑↑ この行を追加 ↑↑↑
+
 // const prisma = new PrismaClient(); // <- このグローバルインスタンスを削除
 
 export async function GET() {
