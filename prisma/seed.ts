@@ -32,7 +32,7 @@ async function main() {
       birthday: new Date("2025-12-31T00:00:00.000Z"), // まだ先
     },
     {
-      email: "Hirose@example.com",
+      email: "user5@example.com",
       password: "password",
       birthday: new Date("2025-10-25T00:00:00.000Z"), // まだ先
     },
